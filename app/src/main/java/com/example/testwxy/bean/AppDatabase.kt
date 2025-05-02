@@ -11,7 +11,9 @@ import androidx.room.RoomDatabase
  * email : 2992203079qq.com
  * date : 2025/5/1 21:04
  */
-@Database(entities = [Login::class], version = 1)
+
+
+@Database(entities = [Login::class], version = 1, exportSchema = true)
 abstract class AppDatabase :RoomDatabase(){
     abstract fun userDao(): UserDao
 

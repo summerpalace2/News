@@ -1,11 +1,10 @@
-package com.example.testwxy
+package com.example.testwxy.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
 import com.example.testwxy.databinding.ActivityLoginBinding
 import com.example.testwxy.ui.MainActivity
 import com.example.testwxy.viewmodel.LoginViewModel
