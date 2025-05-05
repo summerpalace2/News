@@ -20,8 +20,7 @@ https://github.com/summerpalace2/News/blob/main/app/src/images/mmexport174644234
 
 #### 持续滑动新闻，似乎发现一个规律，那就是页面通过日期+新闻详情+进度条（暂时的）,的形式循环，并且三者都是动态刷新，这利用了recycleview的分页加载功能，先创建一个密封类包含三种类型的数据，在adapter的创建中传入（实际上要先传入一个空列表给adapter，因为我们拿到的数据是申请网络请求之后的，等到返回数据后在调用update方法传入，防止adapter报错），在里面创建多个viewholder，在使用getItemViewType方法根据当前位置的 `newsList` 数据类型，告诉 RecyclerView 应该使用哪种类型的 ViewHolder 来显示该项。在这次循环到下次循环开始前，删除页脚，即可实现加载条的动态刷新。不断给recycleview增添数据，给你带来更丰富的体验，同时设置1秒的响应时间，以防止重复刷新https://github.com/summerpalace2/News/blob/main/app/src/images/Screenshot_2025-05-05-19-41-42-73_76d041c8b40ba84.jpg
 
-### 观察右上角，可以看到你的头像https://github.com/summerpalace2/News/blob/main/app/src/images/mmexport1746442340840.gif
-
+### 观察右上角，可以看到你的头像https://github.com/summerpalace2/News/blob/main/app/src/images/Screenshot_2025-05-05-19-41-45-76_76d041c8b40ba84.jpg
 ### 点击按钮即可实现更换头像，并且同步更新到主页，这使用了LiveData来快速响应，并且使用sharepreferences实现本地保存。
 
 从2月中后期到4月份初，其实我对课程的学习并不是很上心，很长一段时间就是看了课件就不管了，缺少练习，并且对知识点掌握不深，让我对这次考核充满了担忧，并且我只是看了课件，没有写自己的笔记，所以在考核前的几周里，我认真的看了之前的课件并且做笔记，看第一行代码，并且通过ai辅助理解和生成有用的知识点，做适当的练习，以加强理解，但就算这样，在期中考核来临前，我仍然没有学完课件，这给我很大压力，所以我下定决心，全身心全投入的面对考核在这紧张的5天中，我花了一天学习compose结果发现知识量庞大，几天不可能速通，于是后面的3天半都非常赶，在这个过程中，我逐渐属性MVVM架构，也学习了recycleview的动态加载，并且让我更有信心，同时也认识到自己的基础不行，需要在后面的日子了多补补基础。总之，这次考核锻炼了我的心态，也认识到了自己的不足，所以我想在下半学期更加努力，争取赶上进度。
