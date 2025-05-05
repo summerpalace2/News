@@ -15,6 +15,12 @@
         android:theme="@style/Theme.Testwxy"
         tools:targetApi="31">
         <activity
+            android:name=".ui.CommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.NewsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.PersonalActivity"
             android:exported="false" />
         <activity

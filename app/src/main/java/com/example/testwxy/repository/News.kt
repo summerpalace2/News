@@ -9,10 +9,11 @@ package com.example.testwxy.repository
 data class News(
     val date: String,
     val stories: List<Story>,
-    val top_stories: List<TopStory>
+    val top_stories: List<TopStory>?=null
 )
 
 data class Story(
+    var date: String,
     val ga_prefix: String,
     val hint: String,
     val id: Int,
@@ -24,9 +25,10 @@ data class Story(
 )
 
 data class TopStory(
+    var date:String,
     val ga_prefix: String,
     val hint: String,
-    val id: Int,
+    val id: Int?,
     val image: String,
     val image_hue: String,
     val title: String,
@@ -36,5 +38,4 @@ data class TopStory(
 sealed class ResultData<out T> {
     data class Success<out T>(val data: T) : ResultData<T>()
     data class Error(val exception: Exception) : ResultData<Nothing>()
-
 }

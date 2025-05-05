@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 /**
  * description ： TODO:类的作用
@@ -41,9 +42,103 @@ class MainRepository {
           ResultData.Error(e)
       }
    }
+    suspend fun getRecentNews(date: String):ResultRecentData<News>{
+        return try{
+            val response=retrofit.getRecentNews(date)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    val body=it
+                    Log.d("successNewsData",body.toString())
+                    ResultRecentData.Success(it)
+                } ?: ResultRecentData.Error(Exception("Body is null"))
+            }
+            else {
+                Log.d("errorNewsData",response.errorBody().toString())
+                ResultRecentData.Error(Exception("error"))
+            }
+
+        }catch (e:Exception){
+            ResultRecentData.Error(e)
+        }
+    }
+
+
+    suspend fun getRecentNewsUrl(date: String):ResultUrlRecentData<News>{
+        return try{
+            val response=retrofit.getRecentUrlNews(date)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    val body=it
+                    Log.d("successNewsData",body.toString())
+                    ResultUrlRecentData.Success(it)
+                } ?:ResultUrlRecentData.Error(Exception("Body is null"))
+            }
+            else {
+                Log.d("errorNewsData",response.errorBody().toString())
+                ResultUrlRecentData.Error(Exception("Error:  ${response.code()}"))
+            }
+        }catch (e:Exception){
+            ResultUrlRecentData.Error(e)
+        }
+    }
+    suspend fun getCommentnumber(id:Int):CommentnumberResult<Commentnumber>{
+        return try{
+            val response=retrofit.getCommentnumber(id)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    val body=it
+                    Log.d("successCommentData",body.toString())
+                    CommentnumberResult.Success(it)
+                } ?:CommentnumberResult.Error(Exception("Body is null"))
+            }
+            else {
+                Log.d("errorCommentData",response.errorBody().toString())
+                CommentnumberResult.Error(Exception("Error:  ${response.code()}"))
+
+            }
+        }catch (e:Exception){
+            CommentnumberResult.Error(e)
+        }
+    }
+    suspend fun getComment(id:Int):CommentsResult<Comments>{
+        return try{
+            val response=retrofit.getComments(id)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    val body=it
+                    Log.d("successCommentData",body.toString())
+                    CommentsResult.Success(it)
+                } ?:CommentsResult.Error(Exception("Body is null"))
+            }
+            else {
+                Log.d("errorCommentData",response.errorBody().toString())
+                 CommentsResult.Error(Exception("Error:  ${response.code()}"))
+
+            }
+        }catch (e:Exception){
+            CommentsResult.Error(e)
+        }
+    }
+
+
 }
 interface NewsServie{
     @GET("api/4/news/latest")
     suspend fun getNews():Response<News>
+
+    // 获取某个日期之前的新闻
+    @GET("api/4/news/before/{date}")
+    suspend fun getRecentNews(@Path("date") date: String): Response<News>
+
+    @GET("api/4/news/before/{date}")
+    suspend fun getRecentUrlNews(@Path("date") date: String): Response<News>
+
+    @GET("api/4/story-extra/{id}")
+    suspend fun getCommentnumber(@Path("id") id: Int): Response<Commentnumber>
+
+    @GET("api/4/story/{id}/short-comments")
+    suspend fun getComments(@Path("id") id: Int): Response<Comments>
+
+
 
 }

@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.testwxy"
-        minSdk = 31
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -54,6 +54,7 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     kapt("com.github.bumptech.glide:compiler:4.16.0")

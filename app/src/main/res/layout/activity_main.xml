@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ui.MainActivity">
     <Toolbar
         android:id="@+id/tb_title"
@@ -13,78 +14,98 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <!-- 左侧 TextView -->
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="5月1日"
-            android:textSize="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <!-- 左侧 TextView -->
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5月1日"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 右侧 ImageView -->
-        <ImageView
-            android:id="@+id/menu_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="5dp"
-            android:src="@drawable/tou"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <!-- 右侧 ImageView -->
+            <ImageView
+                android:id="@+id/menu_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/tou"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 中间的分隔线 -->
-        <View
-            android:id="@+id/tab"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="30dp"
-            android:background="#CCCCCC"
-            app:layout_constraintLeft_toRightOf="@id/title" />
+            <!-- 中间的分隔线 -->
+            <View
+                android:id="@+id/tab"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30dp"
+                android:background="#CCCCCC"
+                app:layout_constraintLeft_toRightOf="@id/title" />
 
-        <TextView
-            android:id="@+id/title2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="早上好"
-            android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/tab" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</Toolbar>
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/vp_banner"
-        android:layout_width="match_parent"
-        android:layout_height="320dp"
-        app:layout_constraintTop_toBottomOf="@id/tb_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <LinearLayout
-        android:id="@+id/indicator"
-        android:layout_width="100dp"
-        android:layout_height="20dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="@id/vp_banner"
-        app:layout_constraintRight_toRightOf="parent" />
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_list"
+            <TextView
+                android:id="@+id/title2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="早上好"
+                android:textSize="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/tab" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </Toolbar>
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/indicator"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5" />
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/tb_title"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="370dp">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/vp_banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <!-- 指示器：放置在右下角 -->
+                <LinearLayout
+                    android:id="@+id/indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="16dp"
+                    android:visibility="visible"/>
+            </FrameLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginTop="20dp"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
 
 
 
