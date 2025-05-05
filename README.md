@@ -6,7 +6,7 @@
 
 #### 简约的登录方式，来自App的轻语。使用room数据库实现本地登陆注册，并且使用sharepreferences 和 checkbox实现保存数据，勾选记住密码后，用sharepreferences保存这一状态，在下次登录时自动填写密码![Screenshot_2025-05-05-18-25-48-32_6bd9dd3c8e06a94]https://github.com/summerpalace2/News/blob/main/app/src/images/Screenshot_2025-05-05-18-25-48-32_6bd9dd3c8e06a94.jpg
 
-### 注册界面同样简约![Screenshot_2025-05-05-18-36-48-50_76d041c8b40ba84](D:\Users\summer\testwxy\app\build\images\Screenshot_2025-05-05-18-36-48-50_76d041c8b40ba84.jpg)
+### 注册界面同样简约!https://github.com/summerpalace2/News/blob/main/app/src/images/Screenshot_2025-05-05-18-36-48-50_76d041c8b40ba84.jpg
 
 ![mmexport1746441551204](D:\Users\summer\testwxy\app\build\images\mmexport1746441551204.gif)
 
