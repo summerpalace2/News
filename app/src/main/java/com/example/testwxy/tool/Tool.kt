@@ -34,7 +34,7 @@ import java.time.format.DateTimeFormatter
  * date : 2025/5/2 11:12
  */
 object Tool {
-    fun getCircularBitmap(bitmap: Bitmap): Bitmap {
+    fun getCircularBitmap(bitmap: Bitmap): Bitmap {//裁剪成圆形图片
         val size = minOf(bitmap.width, bitmap.height)
         val output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(output)
@@ -135,15 +135,15 @@ object Tool {
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
     fun setupIndicators(count: Int, indicatorLayout: LinearLayout, context: Context) {
-        indicatorLayout.removeAllViews()
+        indicatorLayout.removeAllViews()//删除之前设置的防止干扰
         for (i in 0 until count) {
             val dot = ImageView(context).apply {
-                setImageDrawable(ContextCompat.getDrawable(context, R.drawable.indicator_inactive))
-                val params = LinearLayout.LayoutParams(
+                setImageDrawable(ContextCompat.getDrawable(context, R.drawable.indicator_inactive))//设置小圆点的样式
+                val params = LinearLayout.LayoutParams(//表示该视图（ImageView）将被添加到一个 LinearLayout 中，因此使用它的专用布局参数类
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.WRAP_CONTENT//表示宽度和高度都是根据内容自适应大小（即小圆点的图片大小）
                 )
-                params.setMargins(8, 0, 8, 0)
+                params.setMargins(8, 0, 8, 0)//设置间距
                 layoutParams = params
                 scaleX = 0.5f // 初始缩小一点，未选中状态
                 scaleY = 0.5f
@@ -155,9 +155,9 @@ object Tool {
 
     fun setCurrentIndicator(index: Int, indicatorLayout: LinearLayout, context: Context) {
         for (i in 0 until indicatorLayout.childCount) {
-            val imageView = indicatorLayout.getChildAt(i) as ImageView
+            val imageView = indicatorLayout.getChildAt(i) as ImageView //获取每个小圆点对应的图案
 
-            val drawableId = if (i == index) R.drawable.indicator_active else R.drawable.indicator_inactive
+            val drawableId = if (i == index) R.drawable.indicator_active else R.drawable.indicator_inactive//设置选中和没有选中的情况
             imageView.setImageDrawable(ContextCompat.getDrawable(context, drawableId))
 
             val targetScale = if (i==index) 1.2f else 0.8f
@@ -171,7 +171,7 @@ object Tool {
         }
     }
 
-    fun updateStoriesWithNewsDate(news: News): News {
+    fun updateStoriesWithNewsDate(news: News): News {//改变story数据类里面的date数据方便后面操作
         // 获取 `news` 中的 `date` 字段值
         val date = news.date
 

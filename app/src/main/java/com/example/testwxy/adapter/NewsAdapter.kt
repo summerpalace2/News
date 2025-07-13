@@ -9,12 +9,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Glide.init
 import com.example.testwxy.R
 import com.example.testwxy.repository.News
 import com.example.testwxy.repository.NewsItems
 
 import com.example.testwxy.repository.Story
-import kotlin.math.log
+
 
 /**
  * description ： TODO:类的作用
@@ -29,14 +30,26 @@ class NewsAdapter (
     private val ITEM_FOOTER = 0
     private val DATA = 1
     private val DATE = 2
-        inner class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val title: TextView = itemView.findViewById(R.id.tv_News_title)
             val author: TextView = itemView.findViewById(R.id.tv_News_author)
             val image: ImageView = itemView.findViewById(R.id.tv_News_image)
+            init {
+                itemView.setOnClickListener {
+                    val position = bindingAdapterPosition//获取当前在的位置
+                    if (position != RecyclerView.NO_POSITION) {
+                        val item = newsList[position]
+                        if (item is NewsItems.StoryItem) {
+                            onClick.invoke(item.story)//传入了之前的的lambda表达式
+                        }
+                    }
+                }
+            }
+
         }
-        inner class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
-        inner class DateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class DateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val date: TextView = itemView.findViewById(R.id.date)
         }
     fun updateData(newList: List<NewsItems>) {
@@ -51,7 +64,7 @@ class NewsAdapter (
          //追加新数据
         val oldSize = newsList.size
         newsList = newsList + moreItems  // 新建一个新列表
-        notifyItemRangeInserted(oldSize, moreItems.size)
+        notifyItemRangeInserted(oldSize, moreItems.size)//刷新特定的项。
     }
 
 
@@ -75,7 +88,7 @@ class NewsAdapter (
     }
 
 
-    override fun getItemViewType(position: Int): Int {
+    override fun getItemViewType(position: Int): Int {//检查 newsList 的某一项是哪种类型，并返回对应的 ViewType 常量。
         if (newsList.isEmpty()) {
             Log.d("TAG", "emptyList")
         }
@@ -86,7 +99,7 @@ class NewsAdapter (
             is NewsItems.StoryItem -> DATA
             else -> ITEM_FOOTER
         }
-    }
+    }//getItemViewType() 的返回值直接决定 onCreateViewHolder()会加载哪个布局
 
 
     override fun onBindViewHolder(holder:RecyclerView.ViewHolder , position: Int) {
@@ -97,15 +110,17 @@ class NewsAdapter (
             holder.title.text = news.title
             holder.author.text = news.hint
             Glide.with(context).load(news.images[0]).into(holder.image)
-            holder.itemView.setOnClickListener {
-                onClick(news)
-            }
+
+//                holder.itemView.setOnClickListener {
+//                    onClick(news)
+//            }
         }
         if(holder is DateViewHolder && position < newsList.size) {
             val date = ( newsList[position] as NewsItems.DateHeader).date
             holder.date.text = date
         }
     }
+
 
 
 

@@ -75,13 +75,13 @@ class PersonalActivity : AppCompatActivity() {
         }
     }
     private fun showImagePickerDialog() {
-        val options = arrayOf("拍照", "从相册选择")
+        val options = arrayOf("拍照", "从相册选择")//获取对应的数字
         AlertDialog.Builder(this)
             .setTitle("选择头像来源")
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> cameraLauncher.launch(null)
-                    1 -> galleryLauncher.launch("image/*")
+                    1 -> galleryLauncher.launch("image/*")//表示选择器会过滤图片文件（所有格式的图片）。
                 }
             }
             .setNegativeButton("取消", null)

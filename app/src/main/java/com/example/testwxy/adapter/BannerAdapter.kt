@@ -47,5 +47,5 @@ class BannerAdapter(
         holder.adutor.setText(item.hint)
     }
 
-    override fun getItemCount() = Int.MAX_VALUE
+    override fun getItemCount() = Int.MAX_VALUE//设置最大数实现无限循环
 }

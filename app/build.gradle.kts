@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt") // 关键：启用 kapt
+
+// ✅ Navigation Safe Args
 }
 
 android {
@@ -51,9 +53,16 @@ android {
     buildFeatures{
         viewBinding = true
     }
+    dataBinding {
+        enable = true
+    }
 }
 
+
 dependencies {
+
+
+    implementation ("androidx.recyclerview:recyclerview:1.2.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")

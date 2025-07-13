@@ -16,19 +16,7 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
         enableEdgeToEdge()
         initEvent()
-        setupObservers()
-    }
 
-    private fun setupObservers() {
-        viewmodel.registerResult.observe(this){
-            result ->{
-
-                result.onSuccess{
-                    Toast.makeText(this,"注册成功",Toast.LENGTH_SHORT).show() }
-
-            result.onFailure { e->Toast.makeText(this,"注册失败${e.message}",Toast.LENGTH_SHORT).show() }
-        }
-        }
     }
 
     private fun initEvent() {

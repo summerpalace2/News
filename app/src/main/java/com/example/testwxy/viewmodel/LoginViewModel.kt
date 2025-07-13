@@ -17,44 +17,41 @@ import kotlinx.coroutines.launch
  * date : 2025/5/1 21:10
  */
 class LoginViewModel(application: Application):AndroidViewModel(application) {
-  private var repository:LoginRepository
-    val loginResult= MutableLiveData<Result<Login>>()
-    val registerResult=MutableLiveData<Result<Unit>>()
+    private var repository: LoginRepository
+    val loginResult = MutableLiveData<Result<Login>>()
 
-    init{
-        val userDao=AppDatabase.getDatabase(application).userDao()
-         repository= LoginRepository(userDao)
+    init {
+        val userDao = AppDatabase.getDatabase(application).userDao()
+        repository = LoginRepository(userDao)
     }
-    fun login(username:String,password:String){
-        viewModelScope.launch {
-            try{
-                val login=repository.login(username,password)
 
-                if(login !=null){
-                    loginResult.value=Result.success(login)
-                }
-                else{
-                    loginResult.value=Result.failure(Exception("账号或者密码错误"))
+    fun login(username: String, password: String) {
+        viewModelScope.launch {//启动协程
+            try {
+                val login = repository.login(username, password)
+
+                if (login != null) {
+                    loginResult.value = Result.success(login)
+                } else {
+                    loginResult.value = Result.failure(Exception("账号或者密码错误"))
                 }
 
-            }catch (e:Exception){
-                loginResult.value=Result.failure(e)
+            } catch (e: Exception) {
+                loginResult.value = Result.failure(e)
             }
         }
 
     }
-    fun register(username: String,password: String,context: Context){
+
+    fun register(username: String, password: String, context: Context) {
         viewModelScope.launch {
-            try{
-                repository.register(Login(username=username, password = password))
-                registerResult.value=Result.success(Unit)
-                repository.remeberLogin(username,password,context)
-            }catch (e:Exception){
-                registerResult.value= Result.failure(e)
-            }
+
+            repository.register(Login(username = username, password = password))//存储数据
+            repository.remeberLogin(username, password, context)
+
         }
     }
-    fun remeberLogin(context: Context,check:String){
-          repository.rember(context,check)
+    fun remeberLogin(context: Context, check: String) {
+        repository.rember(context, check)//记住密码
     }
 }

@@ -16,6 +16,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bannerList:List<TopStory>
     private lateinit var viewModel: MainViewModel
     private var number=-1
-    private var isLoading = false
+    private var isLoading = false//滑动允许标签
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -62,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         viewModel=ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getNews()
         setupObservers()
+
 
     }
 
@@ -80,18 +83,17 @@ class MainActivity : AppCompatActivity() {
         // 初始化 RecyclerView Adapter（可先用空数据）
         // 禁用 RecyclerView 自身滑动，由 NestedScrollView 接管
         viewPager.isNestedScrollingEnabled = false
-
 //        ✅ 初始化 NewsAdapter 使用空数据
         newsAdapter = NewsAdapter(this, emptyList()) { news ->
             val intent = Intent(this, NewsActivity::class.java)
             intent.putExtra("url", news.url)
             intent.putExtra("date", news.date)
             startActivity(intent)
-        }//2. 你需要先设置 adapter，再异步加载数据
+        }// 你需要先设置 adapter，再异步加载数据
         //RecyclerView.adapter 一般在 onCreate() 里就设置好。
         //获取数据是异步的（比如 ViewModel + LiveData）
        // Adapter 不能等数据到了再创建，否则会导致 RecyclerView 没内容、无法初始化。
-        //所以你先用空数据创建 Adapter，后续再通过 updateData() 或 appendData() 动态更新
+        //所以先用空数据创建 Adapter，后续再通过 updateData() 或 appendData() 动态更新
         binding.rvList.layoutManager = LinearLayoutManager(this)
 
         binding.rvList.adapter = newsAdapter
@@ -140,7 +142,7 @@ class MainActivity : AppCompatActivity() {
                     // 3. 监听页面切换，更新指示器状态
                     viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                         override fun onPageSelected(position: Int) {
-                            val realPosition = position % bannerList.size
+                            val realPosition = position % bannerList.size//给viewpager2设置生成最大数的一半的值，所以要获取真实的索引值
                             Tool.setCurrentIndicator(realPosition,  indicatorLayout, this@MainActivity)
                         }
                     })
@@ -171,7 +173,8 @@ class MainActivity : AppCompatActivity() {
                         val view = v as NestedScrollView
                         // 到达底部
                         if (view.getChildAt(view.childCount - 1).bottom <= (view.height + scrollY)) {
-                            if (!isLoading) {
+                            //view.height可见视图的高度   scrollY 滑动的宽度  view.getChildAt(view.childCount - 1)最后一个子视图  bottom获取纵坐标
+                            if (!isLoading) {//为了防止多次滑动，所以设置滑动状态
                                 onReachBottom()
                             }
                         }
@@ -187,19 +190,25 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-    private fun observeRecycleview() {
+    private fun observeRecycleview() {//由于禁用了recycleview的滑动所以这个监听器取消
         binding.rvList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(rv, dx, dy)
 
                 val layoutManager = rv.layoutManager as? LinearLayoutManager ?: return
+                //获取 RecyclerView 的 LayoutManager 并确保是 LinearLayoutManager 类型。
+                //如果不是（比如 GridLayoutManager 或 StaggeredGridLayoutManager），直接返回。
 
                 val visibleItemCount = layoutManager.childCount
+                //当前屏幕内显示的 item数量
                 val totalItemCount = layoutManager.itemCount
+                //RecyclerView 的总 item数量
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                //屏幕上“最后一个完全可见的 item
 
                 // 到达底部判断条件
                 if (visibleItemCount + lastVisibleItem >= totalItemCount && dy > 0) {
+                    //dy > 0 表示当前是向下滚动，避免向上滑动时触发
                     //“到底了”
                     onReachBottom()
                 }
@@ -207,10 +216,10 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun onReachBottom() {
-        if (isLoading) return
+    private fun onReachBottom() {//更新数据
+        if (isLoading) return//防止多次触发事件
         isLoading = true
-        number++
+        number++//每次调用就加一次以获取n天前的天数
         Log.d("numberdate",number.toString())
         val date = Tool.getDateNDaysAgo(number.toLong())
         Log.d("becomedate",date)
@@ -218,15 +227,22 @@ class MainActivity : AppCompatActivity() {
         viewModel.getRecentNews(date)
 
     }
+    val handler=Handler(Looper.getMainLooper())//获取Looper getMainLooper() 实际上返回的就是 sMainLooper，用于保证主线程中消息的处理。
     fun loadMoreItems(newItems: List<Story>,data:String) {
-        // 假设延迟2秒加载
-        Handler(Looper.getMainLooper()).postDelayed({
+
+        // 假设延迟1秒加载
+        handler.postDelayed({
             // 加载完成，更新列表
 
             newsAdapter.appendData(buildMixedList(newItems,data))
 
-            isLoading = false
+            isLoading = false//关闭滑动状态
         }, 1000)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
     }
 
 }
