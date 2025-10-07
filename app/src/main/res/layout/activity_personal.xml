@@ -3,52 +3,220 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.PersonalActivity">
-    <TextView
-        android:id="@+id/tv_return"
-        android:layout_width="wrap_content"
+    android:background="#F7F8FA"
+    android:fitsSystemWindows="true"
+    tools:context=".feature.personal.PersonalActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_return"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="4dp"
+            android:src="@drawable/back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="个人中心"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 个人信息卡片 -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/infoCard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="返回"
-        android:textSize="18dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:id="@+id/imageView"
-        android:src="@drawable/ic_launcher_foreground"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
+        android:layout_margin="20dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="2dp"
+        app:strokeWidth="0dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:padding="2dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/tou"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/CircleImageStyle"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="1dp" />
+
+            <TextView
+                android:id="@+id/username_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Hi,"
+                android:textColor="#999999"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/usernames"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView" />
+
+            <TextView
+                android:id="@+id/usernames"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="24dp"
+                android:text="知乎用户"
+                android:textColor="#333333"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/username_label"
+                app:layout_constraintTop_toBottomOf="@id/imageView" />
+
+            <Button
+                android:id="@+id/nameButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="更换头像"
+                android:textColor="#2196F3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/usernames" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 底部功能引擎切换区 (Compose 概念按键) -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="用户名:"
-        android:textSize="25dp"
-        android:layout_marginTop="40dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageView"/>
-    <TextView
-        android:id="@+id/usernames"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="name"
-        android:textSize="25dp"
-        android:layout_marginTop="40dp"
-        app:layout_constraintTop_toBottomOf="@id/imageView"
-        app:layout_constraintLeft_toRightOf="@id/username"/>
-    <android.widget.Button
-        android:id="@+id/nameButton"
-        android:layout_width="130dp"
-        android:layout_height="60dp"
-        android:background="@drawable/selector_button"
-        app:layout_constraintTop_toBottomOf="@id/usernames"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="更换头像"/>
+        android:layout_margin="20dp"
+        app:cardBackgroundColor="#EDF5FF"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:strokeColor="#D0E3FF"
+        app:strokeWidth="1dp"
+        app:layout_constraintTop_toBottomOf="@id/infoCard">
+
+        <!-- 使用 MaterialCardView 包裹，增加阴影和圆角，视觉上“扩大”了区域 -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#D0E3FF">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:background="#FFFFFF">
+
+                <!-- 左侧图标 -->
+                <ImageView
+                    android:id="@+id/iv_compose_logo"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_launcher_foreground"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="#4285F4" />
+
+                <!-- 标题 -->
+                <TextView
+                    android:id="@+id/tv_compose_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="UI 渲染引擎"
+                    android:textColor="#1A73E8"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/iv_compose_logo"
+                    app:layout_constraintTop_toTopOf="@id/iv_compose_logo" />
+
+                <!-- 描述文字：限制宽度，防止挤压右侧按钮 -->
+                <TextView
+                    android:id="@+id/tv_desc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="体验全新的声明式UI引擎\n支持动态切换预览"
+                    android:textColor="#667DA1"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/btn_switch_compose"
+                    app:layout_constraintStart_toStartOf="@id/tv_compose_title"
+                    app:layout_constraintTop_toBottomOf="@id/tv_compose_title" />
+
+                <!-- 状态标签：移到描述文字下方，彻底解决挡住按钮的问题 -->
+                <TextView
+                    android:id="@+id/tv_current_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_status_badge"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:text="当前: XML View"
+                    android:textColor="#1A73E8"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="@id/tv_compose_title"
+                    app:layout_constraintTop_toBottomOf="@id/tv_desc" />
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_switch_compose"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="10dp"
+                    android:text="切换引擎"
+                    android:textColor="#1A73E8"
+                    android:textSize="12sp"
+                    app:backgroundTint="#E3F2FD"
+                    app:cornerRadius="20dp"
+                    app:strokeColor="#1A73E8"
+                    app:strokeWidth="1dp"
+                    android:background="@drawable/bg_light_blue_bin"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

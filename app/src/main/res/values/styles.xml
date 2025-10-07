@@ -4,4 +4,8 @@
         <item name="android:textColor">#FF0000</item> <!-- 红色 -->
         <item name="android:textSize">12sp</item> <!-- 字体大小 -->
     </style>
+    <style name="CircleImageStyle">
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

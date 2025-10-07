@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#B3E5FC"> <!-- 水波纹颜色 -->
+    <item>
+        <selector>
+            <!-- 按下时的状态 -->
+            <item android:state_pressed="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="#B3E5FC" />
+                    <corners android:radius="12dp" />
+                    <stroke android:width="1dp" android:color="@color/light_blue_500" />
+                </shape>
+            </item>
+            <!-- 默认状态 -->
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/light_blue_60" />
+                    <corners android:radius="12dp" />
+                    <stroke android:width="1dp" android:color="@color/light_blue_500" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>

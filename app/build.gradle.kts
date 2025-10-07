@@ -1,8 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt") // 关键：启用 kapt
-
+    id("kotlin-kapt")
 }
 
 android {
@@ -20,6 +19,16 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf(
+                    "room.schemaLocation" to "$projectDir/schemas",
+                    "room.incremental" to "true",
+                    "room.expandProjection" to "true"
+                )
+            }
+        }
     }
 
     buildTypes {
@@ -30,76 +39,101 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isDebuggable = true
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true  // 保留 Desugaring
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs = freeCompilerArgs + listOf(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir}/compose_compiler",
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir}/compose_compiler"
+        )
     }
+
     buildFeatures {
         compose = true
+        viewBinding = true
+        dataBinding = true
+        buildConfig = true
     }
+    //关键修复：使用版本目录中的 composeCompiler 版本
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
+        // 使用版本目录中的配置
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
+
+
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/gradle/incremental.annotation.processors",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt"
+            )
         }
-    }
-    buildFeatures{
-        viewBinding = true
-    }
-    dataBinding {
-        enable = true
     }
 }
 
-
 dependencies {
 
-
-    implementation ("androidx.recyclerview:recyclerview:1.2.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
-    implementation ("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
-    implementation ("com.google.code.gson:gson:2.8.9")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
-    // Room 数据库
-    implementation ("androidx.room:room-runtime:2.6.1")
-    kapt ("androidx.room:room-compiler:2.6.1")
-    implementation ("androidx.room:room-ktx:2.6.1")
-
-// ViewModel + LiveData
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-
-
+    // =========== 基础库（核心+UI组件） ===========
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.bundles.ui.components) // 1行替代3行（constraintlayout+recyclerview+viewpager2）
+
+    // =========== ViewModel/Lifecycle ===========
+    implementation(libs.bundles.lifecycle) // 1行替代3行
+    implementation(libs.androidx.lifecycle.viewmodel.compose) // 单独引用（无Bundle）
+
+    // =========== Navigation ===========
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.androidx.navigation.compose)
+
+    // =========== Compose ===========
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(libs.bundles.compose) // 1行替代7行（ui/graphics/material3等）
+    implementation(libs.bundles.compose.integration) // 1行替代3行（activity-compose/navigation-compose等）
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.runtime.livedata)
+
+    // =========== 网络 ===========
+    implementation(libs.bundles.network) // 1行替代6行（retrofit/okhttp/gson等）
+    implementation(libs.bundles.network.rxjava) // 1行替代3行
+
+    // =========== 图片 ===========
+    implementation(libs.bundles.image.loading) // 1行替代1行（语义更清晰）
+    kapt(libs.bundles.image.loading.processor) // 1行替代1行
+
+    // =========== 数据库 ===========
+    implementation(libs.bundles.room) // 1行替代2行
+    kapt(libs.bundles.room.processor) // 1行替代1行
+
+    // =========== Desugaring（升级到兼容 compileSdk 34 的版本） ===========
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
+
+    // =========== 测试 ===========
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
-
-

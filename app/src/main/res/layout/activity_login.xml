@@ -6,7 +6,7 @@
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.LoginActivity">
+    tools:context=".feature.login.LoginActivity">
     <TextView
         android:id="@+id/tv_login_title"
         android:layout_width="wrap_content"

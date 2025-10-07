@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:gravity="center_horizontal"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="80dp"
+    android:gravity="center"
+    android:background="#F8F8F8"
+    android:orientation="horizontal">
 
     <ProgressBar
         style="?android:attr/progressBarStyleSmall"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:id="@+id/progressBar" />
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:indeterminateTint="@color/littlebule"
+        android:layout_marginEnd="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="正在加载往期内容..."
+        android:textColor="#999999"
+        android:textSize="13sp" />
 </LinearLayout>
