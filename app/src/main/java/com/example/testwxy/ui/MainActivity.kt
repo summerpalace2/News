@@ -39,6 +39,7 @@ import com.example.testwxy.viewmodel.MainViewModel
 
 
 
+
 val mLiveData: MutableLiveData<Bitmap> = MutableLiveData()
 class MainActivity : AppCompatActivity() {
     private lateinit var newsAdapter: NewsAdapter

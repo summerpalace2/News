@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt") // 关键：启用 kapt
 
-// ✅ Navigation Safe Args
 }
 
 android {
@@ -43,7 +42,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
     packaging {
         resources {
@@ -81,8 +80,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
 
-// Coroutines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
