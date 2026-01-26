@@ -1,4 +1,6 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
-    <size android:width="10dp" android:height="4dp"/>
-    <solid android:color="@color/white"/>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="4dp" />
+    <solid android:color="#FFFFFF" /> <!-- 纯白 -->
+    <stroke android:width="1dp" android:color="#44000000" /> <!-- 稍微明显的描边 -->
+    <size android:width="16dp" android:height="6dp" /> <!-- 矩形条形状 -->
 </shape>

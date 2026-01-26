@@ -129,44 +129,72 @@ object Tool {
         val byteArray = Base64.decode(base64String, Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
+    /**
+     * 初始化指示器
+     */
     fun setupIndicators(count: Int, indicatorLayout: LinearLayout, context: Context) {
-        indicatorLayout.removeAllViews()//删除之前设置的防止干扰
+        indicatorLayout.removeAllViews()
+        if (count <= 0) return
+
         for (i in 0 until count) {
             val dot = ImageView(context).apply {
-                setImageDrawable(ContextCompat.getDrawable(context, R.drawable.indicator_inactive))//设置小圆点的样式
-                val params = LinearLayout.LayoutParams(//表示该视图（ImageView）将被添加到一个 LinearLayout 中，因此使用它的专用布局参数类
+                // 默认全部设为不活跃状态
+                setImageDrawable(ContextCompat.getDrawable(context, R.drawable.indicator_inactive))
+
+                val params = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT//表示宽度和高度都是根据内容自适应大小（即小圆点的图片大小）
+                    ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-                params.setMargins(8, 0, 8, 0)//设置间距
+                params.setMargins(10, 0, 10, 0) // 间距稍微加大一点，在平板上更协调
                 layoutParams = params
-                scaleX = 0.5f // 初始缩小一点，未选中状态
-                scaleY = 0.5f
+
+                // 初始缩放比例
+                scaleX = 0.8f
+                scaleY = 0.8f
             }
             indicatorLayout.addView(dot)
         }
+
+        // 初始化完毕后，立即强制设置第一个点为选中态
+        // 这样可以避免 ViewPager2 还没回调时，第一个点是缩小的/灰色
+        if (indicatorLayout.childCount > 0) {
+            setCurrentIndicator(0, indicatorLayout, context)
+        }
     }
 
-
+    /**
+     * 切换当前指示器状态
+     */
     fun setCurrentIndicator(index: Int, indicatorLayout: LinearLayout, context: Context) {
-        for (i in 0 until indicatorLayout.childCount) {
-            val imageView = indicatorLayout.getChildAt(i) as ImageView //获取每个小圆点对应的图案
+        val safeIndex = if (indicatorLayout.childCount > 0) index % indicatorLayout.childCount else 0
 
-            val drawableId = if (i == index) R.drawable.indicator_active else R.drawable.indicator_inactive//设置选中和没有选中的情况
+        for (i in 0 until indicatorLayout.childCount) {
+            val imageView = indicatorLayout.getChildAt(i) as ImageView
+
+            // 逻辑判定：是否为当前选中的点
+            val isSelected = i == safeIndex
+
+            // 切换图片
+            val drawableId = if (isSelected) R.drawable.indicator_active else R.drawable.indicator_inactive
             imageView.setImageDrawable(ContextCompat.getDrawable(context, drawableId))
 
-            val targetScale = if (i==index) 1.2f else 0.8f
+            // 动画目标：活跃点变大(1.2f)，非活跃点恢复正常(0.8f)
+            val targetScale = if (isSelected) 1.2f else 0.8f
 
-            // 动画：逐渐缩放
+            // 动画
             imageView.animate()
                 .scaleX(targetScale)
                 .scaleY(targetScale)
-                .setDuration(250)
+                .alpha(if (isSelected) 1.0f else 0.6f) // 非活跃点设置 0.6 透明度，活跃点 1.0，增加对比度
+                .setDuration(200)
                 .start()
         }
     }
 
-    fun updateStoriesWithNewsDate(news: LatestNews): LatestNews {//改变story数据类里面的date数据方便后面操作
+
+
+    //改变story数据类里面的date数据方便后面操作
+    fun updateStoriesWithNewsDate(news: LatestNews): LatestNews {
         // 获取 `news` 中的 `date` 字段值
         val date = news.date
 

@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="main_side_padding">0dp</dimen>
+    <dimen name="banner_height">300dp</dimen>
+    <!-- 手机全屏显示轮播图，不露边 -->
+    <dimen name="banner_peek_width">0dp</dimen>
+    <dimen name="banner_item_margin">0dp</dimen>
+</resources>

@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="main_side_padding">32dp</dimen>
+    <dimen name="banner_height">420dp</dimen>
+    <!-- 平板左右各留出 60dp 露出相邻图片的边缘 -->
+    <dimen name="banner_peek_width">60dp</dimen>
+    <!-- 图片之间的间距 -->
+    <dimen name="banner_item_margin">12dp</dimen>
+</resources>
