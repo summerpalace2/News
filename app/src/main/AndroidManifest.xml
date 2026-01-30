@@ -37,12 +37,6 @@
             android:exported="false"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Testwxy" />
-        <activity
-            android:name=".feature.login.RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".feature.login.LoginActivity"
-            android:exported="false" />
 
     </application>
 

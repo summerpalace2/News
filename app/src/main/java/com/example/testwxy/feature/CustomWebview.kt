@@ -10,9 +10,9 @@ import kotlin.math.abs
 /*
 1,系统级手势兼容： “通过逻辑判定避开了屏幕两侧 40dp 的边缘区域，确保在支持自定义水平滑动切换页面的同时，
 不干扰 Android 全面屏手势的‘侧滑返回’功能，解决了用户交互层面的最高优先级冲突。”
-2,多维意图识别： “利用动态斜率判定（X轴位移 > Y轴位移 1.5倍）
+2,多维意图识别： “利用动态斜率判定（X轴位移 > Y轴位移 1.6倍）
 来精准区分用户的意图——是想‘垂直滚动网页’还是‘横向切换文章’，有效降低了误触率。”
-3,父子容器协同： “利用 requestDisallowInterceptTouchEvent() 动态接管事件流，解决了 WebView 嵌套在滑动容器中时可能产生的事件抢夺问题。”
+3,父子容器协同(预处理逻辑实际在这里没有用到)： “利用 requestDisallowInterceptTouchEvent() 动态接管事件流，解决了 WebView 嵌套在滑动容器中时可能产生的事件抢夺问题。”
  */
 
 class CustomWebView @JvmOverloads constructor(
@@ -54,7 +54,8 @@ class CustomWebView @JvmOverloads constructor(
                 }
 
                 //正常区域点击，先阻止父容器拦截（如ViewPager等）
-                parent.requestDisallowInterceptTouchEvent(true)
+                //当前项目并没有对应的父容器这里可以省略
+                //parent.requestDisallowInterceptTouchEvent(true)
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -66,7 +67,7 @@ class CustomWebView @JvmOverloads constructor(
 
                 // 判定是否为“水平滑动切换文章”的意图
                 // 条件：水平位移超过阈值，且水平位移明显大于垂直位移（防止斜划误触）
-                if (!isSwipingHorizontally && abs(deltaX) > swipeThreshold && abs(deltaX) > abs(deltaY) * 1.5) {
+                if (!isSwipingHorizontally && abs(deltaX) > swipeThreshold && abs(deltaX) > abs(deltaY) * 1.6) {
                     isSwipingHorizontally = true
                     // 确定是我们要的滑动，此时彻底接管事件
                     parent.requestDisallowInterceptTouchEvent(true)

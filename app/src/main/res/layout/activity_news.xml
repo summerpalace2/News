@@ -8,20 +8,21 @@
     android:background="@android:color/white"
     android:fitsSystemWindows="true">
 
-
     <com.example.testwxy.feature.CustomWebView
         android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!--分割线 -->
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="#EEEEEE"
         app:layout_constraintBottom_toTopOf="@id/bottom_bar" />
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_bar"
@@ -30,7 +31,6 @@
         android:background="#FFFFFF"
         android:paddingHorizontal="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
-
 
         <ImageView
             android:id="@+id/tv_return"

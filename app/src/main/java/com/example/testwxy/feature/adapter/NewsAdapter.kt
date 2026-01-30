@@ -1,8 +1,6 @@
 package com.example.testwxy.feature.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -108,7 +106,7 @@ class NewsAdapter(
 
         fun startScroll() {
             handler.removeCallbacks(scrollRunnable)
-            handler.postDelayed(scrollRunnable, 3000)
+            handler.postDelayed(scrollRunnable, 5000)
         }
 
         fun stopScroll() {
@@ -136,7 +134,14 @@ class NewsAdapter(
         fun bind(item: Story) {
             title.text = item.title
             author.text = item.hint
-            Glide.with(itemView.context).load(item.images.getOrNull(0)).into(image)
+            // 使用 ?. 确保 images 列表不为 null
+            // 使用 getOrNull(0) 确保列表为空时不越界
+            val imageUrl = item.images?.getOrNull(0)
+            Glide.with(itemView.context)
+                .load(imageUrl)
+                .error(R.drawable.tou)       // 加载失败或 URL 为空时显示
+                .fallback(R.drawable.tou)    // 当 model 为 null 时显示
+                .into(image)
             itemView.setOnClickListener { onStoryClick(item) }
         }
     }

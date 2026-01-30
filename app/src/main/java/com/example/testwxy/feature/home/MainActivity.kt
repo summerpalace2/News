@@ -5,10 +5,7 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -17,15 +14,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.CompositePageTransformer
-import androidx.viewpager2.widget.MarginPageTransformer
-import androidx.viewpager2.widget.ViewPager2
 import com.example.testwxy.R
-import com.example.testwxy.feature.adapter.BannerAdapter
-import com.example.testwxy.feature.adapter.NewsAdapter
 import com.example.testwxy.core.utils.Tool
-import com.example.testwxy.data.model.*
+import com.example.testwxy.data.model.NewsItems
+import com.example.testwxy.data.model.Resource
+import com.example.testwxy.data.model.buildMixedList
 import com.example.testwxy.databinding.ActivityMainBinding
+import com.example.testwxy.feature.adapter.NewsAdapter
 import com.example.testwxy.feature.news.BannerDetailActivity
 import com.example.testwxy.feature.news.MainViewModel
 import com.example.testwxy.feature.news.NewsDetailActivity
@@ -62,7 +57,6 @@ class MainActivity : AppCompatActivity() {
 
         initView()
         initEvent()
-
         // 设置观察者
         setupObservers()
 
@@ -130,6 +124,11 @@ class MainActivity : AppCompatActivity() {
             when (resource) {
                 is Resource.Success -> {
                     oldestDateInList = resource.data.date
+
+                    //这里人为添加了date参数，这在story的返回数据类并没有存在，为了迎合该项目的点击逻辑，这里人为添加date
+                    resource.data.stories.forEach { story ->
+                        story.date = resource.data.date
+                    }
 
                     val currentItems = newsAdapter.currentList.toMutableList()
                     // 移除旧 Footer

@@ -13,12 +13,13 @@ data class LatestNews(
 )
 
 data class Story(
+    //date人为添加的逻辑为了更好的执行点击事件
     var date: String,
     val ga_prefix: String,
     val hint: String,
     val id: Int,
     val image_hue: String,
-    val images: List<String>,
+    val images: List<String>?,//数据有可能会没有
     val title: String,
     val type: Int,
     val url: String

@@ -29,6 +29,8 @@ import java.time.format.DateTimeFormatter
  * date : 2025/5/2 11:12
  */
 object Tool {
+    // 定义标准的知乎日期格式
+    private val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
     fun getCircularBitmap(bitmap: Bitmap): Bitmap {//裁剪成圆形图片
         val size = minOf(bitmap.width, bitmap.height)
         val output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
@@ -50,18 +52,48 @@ object Tool {
         return output
 
     }
-    fun getPreviousDays(date: String?, daysAgo: Int): String {
-        // 设定日期格式
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
-        // 将输入的日期字符串解析为 LocalDate 对象
-        val inputDate = LocalDate.parse(date, formatter)
 
-        // 获取前 daysAgo 天的日期
-        val resultDate = inputDate.minusDays(daysAgo.toLong())
+    /**
+     * 获取指定日期的【前一天】
+     * 自动处理：20260101 -> 20251231 (跨年)
+     * 自动处理：20240301 -> 20240229 (闰年)
+     */
+    fun getPreviousDay(dateStr: String?): String {
+        return try {
+            if (dateStr.isNullOrEmpty()) return getDateNews()!!
 
-        // 返回前 daysAgo 天的日期格式化为字符串
-        return resultDate.format(formatter)
+            val date = LocalDate.parse(dateStr, formatter)
+            val resultDate = date.minusDays(1)
+            resultDate.format(formatter)
+        } catch (e: Exception) {
+            Log.e("Tool", "日期解析错误: $dateStr")
+            dateStr ?: "" // 发生错误则原样返回或返回今日
+        }
+    }
+
+    /**
+     * 获取指定日期的【后一天】
+     * 自动处理：20251231 -> 20260101 (跨年)
+     */
+    fun getNextDay(dateStr: String?): String {
+        return try {
+            if (dateStr.isNullOrEmpty()) return getDateNews()!!
+
+            val date = LocalDate.parse(dateStr, formatter)
+            val resultDate = date.plusDays(1)
+            resultDate.format(formatter)
+        } catch (e: Exception) {
+            Log.e("Tool", "日期解析错误: $dateStr")
+            dateStr ?: ""
+        }
+    }
+
+    /**
+     * 获取今天的标准日期 (yyyyMMdd)
+     */
+    fun getDateNews(): String? {
+        return LocalDate.now().format(formatter)
     }
     fun getNextDays(date: String, daysAfter: Int): String {
         // 设定日期格式
@@ -76,19 +108,7 @@ object Tool {
         // 返回 daysAfter 天后的日期格式化为字符串
         return resultDate.format(formatter)
     }
-    fun getNextDay(inputDate: String?): String {
-        // 定义日期格式化器
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
-        // 将输入的日期字符串转为 LocalDate 对象
-        val date = LocalDate.parse(inputDate, formatter)
-
-        // 计算后一天的日期
-        val nextDay = date.plusDays(1)
-
-        // 返回格式化后的后一天日期
-        return nextDay.format(formatter)
-    }
 
     fun getTime(): String {
         return when (LocalDateTime.now().hour) {
@@ -106,12 +126,7 @@ object Tool {
         val formattedDate = currentDate.format(formatter)
         return formattedDate
     }
-    fun getDateNews(): String? {
-        val currentDate = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-        val formattedDate = currentDate.format(formatter)
-        return formattedDate
-    }
+
     fun getDateNDaysAgo(n: Long): String {
         val date = LocalDate.now().minusDays(n)
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")

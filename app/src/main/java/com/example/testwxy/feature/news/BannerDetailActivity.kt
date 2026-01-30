@@ -25,23 +25,22 @@ class BannerDetailActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         val url = intent.getStringExtra("url") ?: "https://example.com"
-        Log.d("wwwurl", url)
 
-        // 关键：给 WebView 配置基础参数
+        //给 WebView 配置基础参数
         val webSettings = binding.webView.settings
-        // 启用 JavaScript
+        //启用 JavaScript
         webSettings.javaScriptEnabled = true
         //支持自动加载图片
         webSettings.loadsImagesAutomatically = true
-        // 允许网页缩放
+        //允许网页缩放
         webSettings.setSupportZoom(true)
-        // 处理 HTTPS 混合内容（如果网站有 HTTP 资源）
+        //处理 HTTPS 混合内容（如果网站有 HTTP 资源）
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         }
 
 
-        // 加载 URL
+        //加载 URL
         binding.webView.loadUrl(url)
     }
 }

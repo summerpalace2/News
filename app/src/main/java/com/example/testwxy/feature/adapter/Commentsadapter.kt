@@ -42,7 +42,7 @@ class CommentsAdapter : ListAdapter<Comment, CommentsAdapter.CommentViewHolder>(
 
         Glide.with(holder.itemView.context)
             .load(comment.avatar)
-            .placeholder(R.drawable.tou) // 建议加上占位图
+            .placeholder(R.drawable.tou)
             .circleCrop() // 如果需要圆形头像
             .into(holder.ivAvatar)
     }

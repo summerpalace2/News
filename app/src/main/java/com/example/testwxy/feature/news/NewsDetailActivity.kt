@@ -51,7 +51,7 @@ class NewsDetailActivity : AppCompatActivity() {
         observe()
 
         // 数据初始化
-        requestNewsByDate(initDate.toString(), isFuture = false)
+        requestNewsByDate(initDate.toString())
     }
 
     private fun initWebView() {
@@ -85,9 +85,9 @@ class NewsDetailActivity : AppCompatActivity() {
         //  如果滑动到最后2篇：加载更早日期的内容
         if (index >= stories.size - 2 && !isLoading) {
             isAddingToTop = false
-            val targetDate = Tool.getPreviousDays(oldestDate, 1) // 目标是 oldestDate 的前一天
+            val targetDate = Tool.getPreviousDay(oldestDate) // 目标是 oldestDate 的前一天
             Log.d("Paging", "触发加载更旧内容，目标日期: $targetDate")
-            requestNewsByDate(targetDate, isFuture = false)
+            requestNewsByDate(targetDate)
         }
 
         // 2. 如果滑动到最前2篇：加载更晚日期 (更新)
@@ -95,16 +95,16 @@ class NewsDetailActivity : AppCompatActivity() {
             isAddingToTop = true
             val targetDate = Tool.getNextDay(newestDate) // 目标是 newestDate 的后一天
             Log.d("Paging", "触发加载更新内容，目标日期: $targetDate")
-            requestNewsByDate(targetDate, isFuture = true)
+            requestNewsByDate(targetDate)
         }
     }
 
     /**
-     * 封装请求逻辑，【核心修复点】：处理知乎 API 的日期偏移
+     * 封装请求逻辑，处理知乎 API 的日期偏移
      * @param targetDate 我们想要获取新闻的那一天
      * @param isFuture 是否是向上（未来）请求
      */
-    private fun requestNewsByDate(targetDate: String, isFuture: Boolean) {
+    private fun requestNewsByDate(targetDate: String) {
         isLoading = true
         if (targetDate == Tool.getDateNews()) {
             // 如果目标是今天，直接用今日接口，它不遵循 before 规则
@@ -202,8 +202,8 @@ class NewsDetailActivity : AppCompatActivity() {
         } else {
             // 到达末尾：主动检查并触发加载更旧的内容
             if (!isLoading) {
-                val targetDate = Tool.getPreviousDays(oldestDate, 1)
-                requestNewsByDate(targetDate, isFuture = false)
+                val targetDate = Tool.getPreviousDay(oldestDate)
+                requestNewsByDate(targetDate)
                 Toast.makeText(this, "正在加载更早的内容...", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "内容加载中，请稍后...", Toast.LENGTH_SHORT).show()
@@ -215,12 +215,12 @@ class NewsDetailActivity : AppCompatActivity() {
         if (currentIndex > 0) {
             loadStory(currentIndex - 1)
         } else {
-            // 修改判断条件：如果当前日期已经达到了服务器已知的最新日期，就不要再刷了
+            // 如果当前日期已经达到了服务器已知的最新日期，显示最新
             if (newestDate >= serverLatestDate || newestDate == Tool.getDateNews()) {
                 Toast.makeText(this, "已经是最新了", Toast.LENGTH_SHORT).show()
             } else {
                 // 只有确实落后于已知日期时才刷新
-                requestNewsByDate(Tool.getNextDay(newestDate), isFuture = true)
+                requestNewsByDate(Tool.getNextDay(newestDate))
             }
         }
     }
