@@ -1,5 +1,7 @@
 package com.example.testwxy.feature.news
 
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -24,7 +26,7 @@ class BannerDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         enableEdgeToEdge()
 
-        val url = intent.getStringExtra("url") ?: "https://example.com"
+        val url = intent.getStringExtra("extra_url") ?: "https://example.com"
 
         //给 WebView 配置基础参数
         val webSettings = binding.webView.settings
@@ -42,5 +44,16 @@ class BannerDetailActivity : AppCompatActivity() {
 
         //加载 URL
         binding.webView.loadUrl(url)
+    }
+    //封装公共方法让外界访问
+    companion object {
+        private const val EXTRA_URL = "extra_url" // 抽离 Key 值，防止拼写错误
+
+        fun start(context: Context, url: String?) {
+            val intent = Intent(context, BannerDetailActivity::class.java).apply {
+                putExtra(EXTRA_URL, url)
+            }
+            context.startActivity(intent)
+        }
     }
 }

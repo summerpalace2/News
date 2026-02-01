@@ -1,5 +1,6 @@
 package com.example.testwxy.feature.news
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -7,12 +8,14 @@ import android.util.Log
 import android.webkit.WebSettings
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.testwxy.core.utils.Tool
 import com.example.testwxy.data.model.Resource
 import com.example.testwxy.data.model.Story
 import com.example.testwxy.databinding.ActivityNewsBinding
 import com.example.testwxy.feature.comment.CommentDetailActivity
+import kotlin.getValue
 
 /**
  * description ： TODO:新闻页 左右无限滑动版本
@@ -34,7 +37,7 @@ class NewsDetailActivity : AppCompatActivity() {
     private var oldestDate: String = "" // 列表中最旧日期
     private var newestDate: String = "" // 列表中最新日期
 
-    private val viewModel: MainViewModel by lazy { MainViewModel(application) }
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +56,19 @@ class NewsDetailActivity : AppCompatActivity() {
         // 数据初始化
         requestNewsByDate(initDate.toString())
     }
+    companion object{
+        private const val URL ="url"
+        private const val DATE ="date"
+
+        fun start(context: Context,url: String?,date: String?){
+            val intent = Intent(context, NewsDetailActivity::class.java).apply{
+                putExtra(URL,url)
+                putExtra(DATE,date)
+            }
+            context.startActivity(intent)
+        }
+    }
+
 
     private fun initWebView() {
         val settings = binding.webView.settings

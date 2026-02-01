@@ -22,6 +22,7 @@ import com.example.testwxy.feature.home.mLiveData
 class PersonalActivity : AppCompatActivity() {
     private lateinit var cameraLauncher: ActivityResultLauncher<Void?>
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
+    private val prefs by lazy { getSharedPreferences("config", MODE_PRIVATE) }
     private val binding: ActivityPersonalBinding by lazy {
         ActivityPersonalBinding.inflate(layoutInflater)
     }
@@ -51,6 +52,8 @@ class PersonalActivity : AppCompatActivity() {
             val circularBitmap = Tool.getCircularBitmap(bitmap)
             binding.imageView.setImageBitmap(circularBitmap)
         }
+        updateSwitchStatusUI(prefs.getBoolean("is_compose_mode", false))
+
     }
 
     private fun initEvent() {
@@ -80,19 +83,30 @@ class PersonalActivity : AppCompatActivity() {
                     sharedPreferences.edit().putString("image", base64String).apply()
                 }
             }
-        var isComposeMode = false
+
 
         binding.btnSwitchCompose.setOnClickListener {
-            isComposeMode = !isComposeMode
+            val currentMode = prefs.getBoolean("is_compose_mode", false)
+            val targetMode = !currentMode // 取反
 
-            if (isComposeMode) {
-                binding.tvCurrentStatus.text = "当前: Compose"
-                binding.tvCurrentStatus.setTextColor(Color.parseColor("#4CAF50")) // 切换成绿色代表新引擎
-                Toast.makeText(this, "已切换至 Compose 渲染引擎", Toast.LENGTH_SHORT).show()
-            } else {
-                binding.tvCurrentStatus.text = "当前: XML View"
-                binding.tvCurrentStatus.setTextColor(Color.parseColor("#1A73E8"))
-            }
+            toggleEngine(targetMode)
+
+            updateSwitchStatusUI(targetMode)
+
+            Toast.makeText(this, "引擎已切换，重启应用生效", Toast.LENGTH_SHORT).show()
+
+        }
+    }
+    /**
+     * 专门负责根据模式更新 UI 的方法
+     */
+    private fun updateSwitchStatusUI(isCompose: Boolean) {
+        if (isCompose) {
+            binding.tvCurrentStatus.text = "当前: Compose"
+            binding.tvCurrentStatus.setTextColor(Color.parseColor("#4CAF50"))
+        } else {
+            binding.tvCurrentStatus.text = "当前: XML View"
+            binding.tvCurrentStatus.setTextColor(Color.parseColor("#1A73E8"))
         }
     }
 
@@ -108,6 +122,13 @@ class PersonalActivity : AppCompatActivity() {
             }
             .setNegativeButton("取消", null)
             .show()
+    }
+    /**
+     * 切换引擎的方法
+     * @param targetMode true 为 Compose, false 为 XML
+     */
+    fun toggleEngine(targetMode: Boolean) {
+        prefs.edit().putBoolean("is_compose_mode", targetMode).apply()
     }
 
 }

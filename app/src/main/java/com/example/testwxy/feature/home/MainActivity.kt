@@ -7,9 +7,19 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +51,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var newsAdapter: NewsAdapter
     private val viewModel: MainViewModel by viewModels()
 
+    private val prefs by lazy { getSharedPreferences("config", MODE_PRIVATE) }
+
+    // 标记当前是什么模式
+    private var isComposeMode = false
+
     // 使用日期追踪替代数字计数，解决日期跳跃问题
     private var oldestDateInList: String = ""
     private var isLoading = false
@@ -52,34 +67,79 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+
+        isComposeMode = prefs.getBoolean("is_compose_mode", false)
+        if (isComposeMode) {
+            setContent {MainScreen(viewModel)  }
+        } else {
+            setContentView(binding.root)
+            initView()
+            initEvent()
+            // 设置观察者
+            setupObservers()
+
+        }
         enableEdgeToEdge()
-
-        initView()
-        initEvent()
-        // 设置观察者
-        setupObservers()
-
         viewModel.getNews()
     }
 
+
+    @Composable
+    fun MainScreen(viewModel: MainViewModel) {
+        val newsResource by viewModel.newsResult.observeAsState()
+        val recentResource by viewModel.recentNewsResult.observeAsState()
+        val context = LocalContext.current
+
+        LaunchedEffect(newsResource) {
+            when (val res = newsResource) {
+                is Resource.Success -> viewModel.handleInitialNews(res.data)
+                is Resource.Error -> Toast.makeText(context, "加载失败", Toast.LENGTH_SHORT).show()
+                else -> {}
+            }
+        }
+
+        LaunchedEffect(recentResource) {
+            when (val res = recentResource) {
+                is Resource.Success -> viewModel.handleHistoryNews(res.data)
+                is Resource.Error -> {
+                    Toast.makeText(context, "获取历史失败", Toast.LENGTH_SHORT).show()
+                    viewModel.fullNewsList.removeAll { it is NewsItems.Footer }
+                }
+
+                else -> {}
+            }
+        }
+
+        MainPage(
+            newsItems = viewModel.fullNewsList,
+            onStoryClick = { story ->
+                NewsDetailActivity.start(context, story.url, story.date)
+            },
+            onBnnerClick = { topStory ->
+                BannerDetailActivity.start(context, topStory.url)
+            },
+            onAvatarClick = {
+                startActivity(Intent(this, PersonalActivity::class.java))
+            }
+            ,
+            onLoadMore = {
+                viewModel.loadMore()
+            }
+        )
+    }
+
     private fun initView() {
-        // ：初始化 NewsAdapter，传入 Banner 点击和普通新闻点击两个回调
+        //初始化 NewsAdapter，传入 Banner 点击和普通新闻点击两个回调
         newsAdapter = NewsAdapter(
             onBannerClick = { topStory ->
-                startActivity(Intent(this, BannerDetailActivity::class.java).apply {
-                    putExtra("url", topStory.url)
-                })
+                BannerDetailActivity.start(this, topStory.url)
             },
             onStoryClick = { story ->
-                startActivity(Intent(this, NewsDetailActivity::class.java).apply {
-                    putExtra("url", story.url)
-                    putExtra("date", story.date)
-                })
+                NewsDetailActivity.start(this, story.url, story.date)
             }
         )
 
-        // 平板适配逻辑
+        //平板适配逻辑
         val columnCount = resources.getInteger(R.integer.main_column_count)
         if (columnCount > 1) {
             val gridLayoutManager = GridLayoutManager(this, columnCount)
@@ -96,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.rvList.adapter = newsAdapter
 
-        // 下拉刷新
+        //下拉刷新
         binding.swipeRefreshLayout.apply {
             setProgressViewOffset(true, -100.dpToPx(), 40.dpToPx())
             val columnCount = resources.getInteger(R.integer.main_column_count)
@@ -119,7 +179,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupObservers() {
         mLiveData.observe(this) { binding.menuIcon.setImageBitmap(it) }
 
-        // 历史新闻
+        //历史新闻
         viewModel.recentNewsResult.observe(this) { resource ->
             when (resource) {
                 is Resource.Success -> {
@@ -151,14 +211,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 今日新闻 (首屏加载/刷新)
+        //今日新闻 (首屏加载/刷新)
         viewModel.newsResult.observe(this) { resource ->
             binding.swipeRefreshLayout.isRefreshing = false
             when (resource) {
                 is Resource.Success -> {
                     oldestDateInList = resource.data.date
 
-                    // 【核心修改】：通过 buildMixedList 将 Banner 数据和今日新闻一起包装成列表
+                    //通过 buildMixedList 将 Banner 数据和今日新闻一起包装成列表
                     val updatedStories = Tool.updateStoriesWithNewsDate(resource.data)
                     val mixedList = buildMixedList(
                         updatedStories.stories,
@@ -168,7 +228,7 @@ class MainActivity : AppCompatActivity() {
 
                     newsAdapter.submitList(mixedList)
 
-                    // 数据上屏后检查一次
+                    //数据上屏后检查一次
                     binding.rvList.post { checkIfNeedMoreContent() }
                 }
 

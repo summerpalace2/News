@@ -3,6 +3,7 @@ package com.example.testwxy.feature.comment
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.testwxy.R
@@ -10,6 +11,7 @@ import com.example.testwxy.feature.adapter.CommentsAdapter
 import com.example.testwxy.data.model.Resource
 import com.example.testwxy.databinding.ActivityCommentBinding
 import com.example.testwxy.feature.news.MainViewModel
+import kotlin.getValue
 
 /**
  * description ： TODO:评论显示页
@@ -19,9 +21,7 @@ import com.example.testwxy.feature.news.MainViewModel
 
 class CommentDetailActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by lazy {
-        MainViewModel(application)
-    }
+    private val viewModel: MainViewModel by viewModels()
 
     private lateinit var commentsadapter: CommentsAdapter
 

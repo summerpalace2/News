@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
+    kotlin("plugin.serialization") version "1.9.23"
 }
 
 android {
@@ -45,13 +46,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-        isCoreLibraryDesugaringEnabled = true  // 保留 Desugaring
+        sourceCompatibility = JavaVersion.VERSION_17 // 改为 17
+        targetCompatibility = JavaVersion.VERSION_17 // 改为 17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
         freeCompilerArgs = freeCompilerArgs + listOf(
             "-P",
             "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir}/compose_compiler",
@@ -66,7 +67,7 @@ android {
         dataBinding = true
         buildConfig = true
     }
-    //关键修复：使用版本目录中的 composeCompiler 版本
+    //使用版本目录中的 composeCompiler 版本
     composeOptions {
         // 使用版本目录中的配置
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
@@ -87,6 +88,7 @@ android {
         }
     }
 }
+
 
 dependencies {
 
@@ -118,7 +120,7 @@ dependencies {
     implementation(libs.bundles.network.rxjava) // 1行替代3行
 
     // =========== 图片 ===========
-    implementation(libs.bundles.image.loading) // 1行替代1行（语义更清晰）
+    implementation(libs.bundles.image.loading)
     kapt(libs.bundles.image.loading.processor) // 1行替代1行
 
     // =========== 数据库 ===========
@@ -136,4 +138,5 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }

@@ -19,7 +19,6 @@ import com.example.testwxy.data.model.TopStory
  * date : 2025/5/2 17:41
  */
 
-// BannerAdapter.kt
 class BannerAdapter(
     private val bannerList: List<TopStory>,
     private val onClick: (TopStory) -> Unit
@@ -41,7 +40,7 @@ class BannerAdapter(
 
         // 用于数据绑定的真实索引
         val realPosition = position % bannerList.size
-        val item = bannerList[realPosition]
+        val item = bannerList.get(realPosition)
 
         Glide.with(holder.itemView.context)
             .load(item.image)

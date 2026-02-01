@@ -7,17 +7,17 @@
     android:clipToPadding="false"
     android:layout_marginBottom="10dp">
 
-    <!-- 轮播图主体 -->
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_banner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
         android:clipToPadding="false"
+
         android:paddingStart="@dimen/banner_peek_width"
         android:paddingEnd="@dimen/banner_peek_width" />
 
-    <!-- 指示器小圆点：放在右下角 -->
     <LinearLayout
         android:id="@+id/indicator"
         android:layout_width="wrap_content"
