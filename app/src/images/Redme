@@ -1,27 +1,41 @@
-## 「知晤晨笺」
+# 「知晤晨笺」
 
-### 一个仿写知乎日报的APP
+### *一个仿写知乎日报的APP*
 
+这是我中期考核的作品，时隔半年，迎来这一次的重构。重写知乎日报的webview滑动逻辑，以及美化UI，同时对主页进行了compose重构，用户可以通过个人页点击按钮切换(点击头像跳转)
 
+下面我来说一下本次重构的**新颖点和难点**
 
-#### 简约的登录方式，来自App的轻语。使用room数据库实现本地登陆注册，并且使用sharepreferences 和 checkbox实现保存数据，勾选记住密码后，用sharepreferences保存这一状态，在下次登录时自动填写密码![Screenshot_2025-05-05-18-25-48-32_6bd9dd3c8e06a94](D:\Users\summer\testwxy\app\build\images\Screenshot_2025-05-05-18-25-48-32_6bd9dd3c8e06a94.jpg)
+### WebView的左右滑动切换和WebView内部的滑动冲突解决
 
-### 注册界面同样简约![Screenshot_2025-05-05-18-36-48-50_76d041c8b40ba84](D:\Users\summer\testwxy\app\build\images\Screenshot_2025-05-05-18-36-48-50_76d041c8b40ba84.jpg)
+在知乎日报的WebView页，我们可以发现它是以类似翻页的操作实现的，但是**「知晤晨笺」**对于滑动的处理不一样，它始终是一个Activity没有fragment，它通过检测左右滑动来判断页面是否需要刷新，它的数据源由一个变量
 
-![mmexport1746441551204](D:\Users\summer\testwxy\app\build\images\mmexport1746441551204.gif)
+储存
 
-#### 来到主界面，映入眼帘的就是观赏性好的轮播图，使用viewpager2+监听器的方式实现，在创建的同时实现了过渡自然的动画，点击轮播图后，触发点击事件，进入一个全新的activity，传入url，并使用webview，实现网页详情。在下面的新闻列表中，点击进入，可以看到不止有新闻详情，还有评论点赞收藏和转发，其中点击评论，就可以查看评论了，如果你觉得这篇文章很好看，还可以点击转发按钮，转发给其他人看，一起享受这段美好
+```Kotlin
+private val stories = mutableListOf<Story>()
+```
 
-![mmexport1746442340840](D:\Users\summer\testwxy\app\build\images\mmexport1746442340840.gif)
+我们知道，对于**WebView其页面内部也会有滑动**，并且如果为我们识别左右滑动更新WebView的url时还可能会遇到这样的问题，**对于全面屏手势，左右边缘的滑动即侧滑对应系统层面的手势返回，这会被Webview消费掉，导致WebView的网页回退(在WebView没有历史记录，即第一个网页时，才能手势退出界面）**
 
-### 如果你想要沉浸式阅读，可以随便点击一个新闻，看完就右滑，这通过viewpager2的创建，外加动态添加的结果，当某一天的新闻滑动底时，会触发监听事件，进而更新内容。
+所以这里解决了3种条件下的滑动冲突
 
-![mmexport1746442688529](D:\Users\summer\testwxy\app\build\images\mmexport1746442688529.gif)
+1.**WebView拦截 vs. 系统侧滑返回（最高优先级冲突）**
 
-#### 持续滑动新闻，似乎发现一个规律，那就是页面通过日期+新闻详情+进度条（暂时的）,的形式循环，并且三者都是动态刷新，这利用了recycleview的分页加载功能，先创建一个密封类包含三种类型的数据，在adapter的创建中传入（实际上要先传入一个空列表给adapter，因为我们拿到的数据是申请网络请求之后的，等到返回数据后在调用update方法传入，防止adapter报错），在里面创建多个viewholder，在使用getItemViewType方法根据当前位置的 `newsList` 数据类型，告诉 RecyclerView 应该使用哪种类型的 ViewHolder 来显示该项。在这次循环到下次循环开始前，删除页脚，即可实现加载条的动态刷新。不断给recycleview增添数据，给你带来更丰富的体验，同时设置1秒的响应时间，以防止重复刷新![Screenshot_2025-05-05-19-41-42-73_76d041c8b40ba84](D:\Users\summer\testwxy\app\build\images\Screenshot_2025-05-05-19-41-42-73_76d041c8b40ba84.jpg)
+引入 `edgeThreshold` (40dp)即边缘宽度，在这个边缘WebView不会拦截滑动并消费事件
 
-### 观察右上角，可以看到你的头像![Screenshot_2025-05-05-19-41-45-76_76d041c8b40ba84](D:\Users\summer\testwxy\app\build\images\Screenshot_2025-05-05-19-41-45-76_76d041c8b40ba84.jpg)
+2.**Web 垂直滚动 vs. 自定义横向翻页（维度识别冲突）**
 
-### 点击按钮即可实现更换头像，并且同步更新到主页，这使用了LiveData来快速响应，并且使用sharepreferences实现本地保存。
+ 引入“动态斜率判定” (abs(deltaX) > abs(deltaY) * 1.6)，当用户有明显的翻页意图再执行翻页操作
 
-在这紧张的5天中，我花了一天学习compose结果发现知识量庞大，几天不可能速通，于是后面的3天半都非常赶，在这个过程中，我逐渐属性MVVM架构，也学习了recycleview的动态加载，并且让我更有信心，同时也认识到自己的基础不行，需要在后面的日子了多补补基础。总之，这次考核锻炼了我的心态，也认识到了自己的不足，所以我想在下半学期更加努力，争取赶上进度。
+3.**WebView 内部元素点击/横向滚动 vs. 自定义翻页（组件功能冲突）**
+
+ 如果网页内部有横向滑动的图片轮播或者用户只是想点击一个链接，自定义的翻页逻辑可能会拦截这些事件。
+
+ 通过 `isSwipingHorizontally` 状态位和事件消费机制处理。
+
+### 拉伸回弹(处理LazyColumn触底刷新数据后无法滑动)
+
+compose页面重构中，对于主页的滑动刷新逻辑，我发现一直往下滑刷新会出现手势划不动的情况。保持一直下滑的手势，多次下滑不停顿，就会一直卡住，明明以及看到下面数据的影子了，但是当你松开手指，过一会，你发现又可以了。这个就是Android12更新的拉伸回弹机制在作祟
+
+去除这个机制后就不卡了
