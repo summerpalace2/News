@@ -26,6 +26,7 @@ data class ReplyTo(
     val id: Int,
     val status: Int
 )
+
 sealed class CommentsResult<out T> {
     data class Success<out T>(val data:T):CommentsResult<T>()
     data class Error(val exception:Exception):CommentsResult<Nothing>()
