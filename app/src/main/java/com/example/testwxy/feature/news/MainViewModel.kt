@@ -2,6 +2,7 @@ package com.example.testwxy.feature.news
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -89,7 +90,7 @@ class MainViewModel : ViewModel() {
         }
 
         // 使用 Snapshot 包装，保证 remove 和 add 合并为一个原子操作
-        androidx.compose.runtime.snapshots.Snapshot.withMutableSnapshot {
+        Snapshot.withMutableSnapshot {
             // 先找到 Footer 的位置（如果存在）
             val footerIndex = fullNewsList.indexOfFirst { it is NewsItems.Footer }
             if (footerIndex != -1) {
@@ -104,7 +105,7 @@ class MainViewModel : ViewModel() {
         isPagingLoading = false
     }
 
-    // 5. 触发加载更多
+    //触发加载更多
     fun loadMore() {
         if (!isPagingLoading && oldestDate.isNotEmpty()) {
             isPagingLoading = true
@@ -112,6 +113,13 @@ class MainViewModel : ViewModel() {
             getRecentNews(oldestDate) // 调用仓库请求
         }
     }
+
+    fun handleLoadError() {
+        isPagingLoading = false
+        // 移除 Footer 确保 UI 一致
+        fullNewsList.removeAll { it is NewsItems.Footer }
+    }
+
 
 
 }

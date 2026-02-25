@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         isComposeMode = prefs.getBoolean("is_compose_mode", false)
         if (isComposeMode) {
-            setContent {MainScreen(viewModel)  }
+            setContent { MainScreen(viewModel) }
         } else {
             setContentView(binding.root)
             initView()
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                 is Resource.Success -> viewModel.handleHistoryNews(res.data)
                 is Resource.Error -> {
                     Toast.makeText(context, "获取历史失败", Toast.LENGTH_SHORT).show()
-                    viewModel.fullNewsList.removeAll { it is NewsItems.Footer }
+                    viewModel.handleLoadError()
                 }
 
                 else -> {}
@@ -120,8 +120,7 @@ class MainActivity : AppCompatActivity() {
             },
             onAvatarClick = {
                 startActivity(Intent(this, PersonalActivity::class.java))
-            }
-            ,
+            },
             onLoadMore = {
                 viewModel.loadMore()
             }

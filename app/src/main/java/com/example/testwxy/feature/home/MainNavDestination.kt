@@ -62,6 +62,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.runtime.CompositionLocalProvider
+import com.example.testwxy.feature.news.MainViewModel
 
 /**
  * description ： TODO:知乎日报主页面
@@ -103,7 +104,7 @@ fun MainPage(
             onLoadMore()
         }
     }
-
+//待做的平板适配
     val windowSize = getWindowScreenSize()
 //约束布局的设置
     ConstraintLayout(

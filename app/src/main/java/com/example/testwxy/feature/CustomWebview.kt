@@ -47,11 +47,12 @@ class CustomWebView @JvmOverloads constructor(
                 isSwipingHorizontally = false
 
                 //如果在边缘区域，立即放弃所有后续事件处理，交给系统手势
-                if (isInEdgeArea(startX)) {
-                    parent.requestDisallowInterceptTouchEvent(false)
-                    return false
-                // 不消费DOWN，后续MOVE/UP都不会再传给此View
-                }
+//                if (isInEdgeArea(startX)) {
+//                    // 立即返回false，不消费任何边缘区域的事件
+//                    parent.requestDisallowInterceptTouchEvent(false)
+//                    return false
+//                // 不消费DOWN，后续MOVE/UP都不会再传给此View
+//                }
 
                 //正常区域点击，先阻止父容器拦截（如ViewPager等）
                 //当前项目并没有对应的父容器这里可以省略
@@ -60,7 +61,7 @@ class CustomWebView @JvmOverloads constructor(
 
             MotionEvent.ACTION_MOVE -> {
                 //防御性检查：如果是边缘起点，不处理
-                if (isInEdgeArea(startX)) return false
+                //if (isInEdgeArea(startX)) return false
 
                 val deltaX = x - startX
                 val deltaY = y - startY
@@ -70,7 +71,7 @@ class CustomWebView @JvmOverloads constructor(
                 if (!isSwipingHorizontally && abs(deltaX) > swipeThreshold && abs(deltaX) > abs(deltaY) * 1.6) {
                     isSwipingHorizontally = true
                     // 确定是我们要的滑动，此时彻底接管事件
-                    parent.requestDisallowInterceptTouchEvent(true)
+                    //parent.requestDisallowInterceptTouchEvent(true)
                 }
             }
 
@@ -88,6 +89,7 @@ class CustomWebView @JvmOverloads constructor(
                     return true
                 // 消费掉切换文章的滑动，不让WebView跳转网页链接
                 }
+
                 isSwipingHorizontally = false
             }
         }
@@ -96,17 +98,16 @@ class CustomWebView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        // 在拦截层就避开边缘，确保系统手势有最高优先级
-        if (event.action == MotionEvent.ACTION_DOWN && isInEdgeArea(event.x)) {
-            return false
-        }
-        return super.onInterceptTouchEvent(event)
-    }
+//    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+//        // 在拦截层就避开边缘，确保系统手势有最高优先级
+//        if (event.action == MotionEvent.ACTION_DOWN && isInEdgeArea(event.x)) {
+//            return false
+//        }
+//        return super.onInterceptTouchEvent(event)
+//    }
 
     private fun isInEdgeArea(x: Float): Boolean {
-        val screenWidth = resources.displayMetrics.widthPixels
-        // 同时检测左边缘和右边缘（全面屏手势两侧都能返回）
-        return x < edgeThreshold || x > (screenWidth - edgeThreshold)
+        // 左侧边缘区域，可以适当调大
+        return x < edgeThreshold
     }
 }

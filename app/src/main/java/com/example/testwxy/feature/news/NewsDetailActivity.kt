@@ -210,6 +210,7 @@ class NewsDetailActivity : AppCompatActivity() {
         loadStory(if (startIdx >= 0) startIdx else 0)
     }
 
+
     // -------------------- 导航方法 --------------------
 
     private fun loadNextStory() {
